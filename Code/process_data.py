@@ -19,7 +19,7 @@ def process_training_data(num_clips):
     """
     num_prev_clips = len(glob(c.TRAIN_DIR_CLIPS + '*'))
 
-    for clip_num in xrange(num_prev_clips, num_clips + num_prev_clips):
+    for clip_num in range(num_prev_clips, num_clips + num_prev_clips):
         clip = process_clip()
 
         np.savez_compressed(c.TRAIN_DIR_CLIPS + str(clip_num), clip)

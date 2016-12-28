@@ -44,10 +44,10 @@ def clear_dir(directory):
 
 def get_test_frame_dims():
     img_path = glob(os.path.join(TEST_DIR, '*/*'))[0]
-    img = imread(img_path, mode='RGB')
-    shape = np.shape(img)
+    img = imread(img_path, mode='RGB') #  to read a image, and return an array which representing the image
+    shape = np.shape(img) # get the shape of the image, e.g. (210, 160)
 
-    return shape[0], shape[1]
+    return shape[0], shape[1]   # return the row(210) and coloumn(160)
 
 def get_train_frame_dims():
     img_path = glob(os.path.join(TRAIN_DIR, '*/*'))[0]
@@ -169,15 +169,15 @@ LRATE_G = 0.00004  # Value in paper is 0.04
 PADDING_G = 'SAME'
 # feature maps for each convolution of each scale network in the generator model
 # e.g SCALE_FMS_G[1][2] is the input of the 3rd convolution in the 2nd scale network.
-SCALE_FMS_G = [[3 * HIST_LEN, 128, 256, 128, 3],
-               [3 * (HIST_LEN + 1), 128, 256, 128, 3],
-               [3 * (HIST_LEN + 1), 128, 256, 512, 256, 128, 3],
-               [3 * (HIST_LEN + 1), 128, 256, 512, 256, 128, 3]]
+SCALE_FMS_G = [[3 * HIST_LEN, 128, 256, 128, 3],                        # scale 1   (4 x 4)
+               [3 * (HIST_LEN + 1), 128, 256, 128, 3],                  # scale 2   (8 x 8)
+               [3 * (HIST_LEN + 1), 128, 256, 512, 256, 128, 3],        # scale 3   (16x16)
+               [3 * (HIST_LEN + 1), 128, 256, 512, 256, 128, 3]]        # scale 4   (32x32)
 # kernel sizes for each convolution of each scale network in the generator model
-SCALE_KERNEL_SIZES_G = [[3, 3, 3, 3],
-                        [5, 3, 3, 5],
-                        [5, 3, 3, 3, 3, 5],
-                        [7, 5, 5, 5, 5, 7]]
+SCALE_KERNEL_SIZES_G = [[3, 3, 3, 3],           # scale 1   (4 x 4)
+                        [5, 3, 3, 5],           # scale 2   (8 x 8)
+                        [5, 3, 3, 3, 3, 5],     # scale 3   (16x16)
+                        [7, 5, 5, 5, 5, 7]]     # scale 4   (32x32)
 
 
 ##

@@ -110,7 +110,7 @@ def adv_loss(preds, labels):
     """
     # calculate the loss for each scale
     scale_losses = []
-    for i in xrange(len(preds)):
+    for i in range(len(preds)):
         loss = bce_loss(preds[i], labels)
         scale_losses.append(loss)
 
