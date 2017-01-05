@@ -3,13 +3,13 @@ To learn the intuitive physics from videos by using Deep Learning Neural Network
 
 
 ## GANs Structure
-<img src="https://github.com/yun-long/IntuitivePhysics/tree/master/Tutorials/figures/my_Structure.jpeg" width="100%" />
+<img src="https://github.com/yun-long/IntuitivePhysics/tree/master/Tutorials/figures/my_Structure" width="50%" />
 
 ## Generator
-<img src="https://github.com/yun-long/IntuitivePhysics/tree/master/Tutorials/figures/my_Generator.jpeg" width="100%" />
+<img src="https://github.com/yun-long/IntuitivePhysics/tree/master/Tutorials/figures/my_Generator" width="50%" />
 
 ## Discriminator
-<img src="https://github.com/yun-long/IntuitivePhysics/tree/master/Tutorials/figures/my_Discriminator.jpeg" width="100%" />
+<img src="https://github.com/yun-long/IntuitivePhysics/tree/master/Tutorials/figures/my_Discriminator" width="50%" />
 
 
 ## Usage
