@@ -1,2 +1,6 @@
 Data/
 .idea/
+Save/
+Tutorials/
+__pycache__/
+*.pyc

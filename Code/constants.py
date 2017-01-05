@@ -70,9 +70,9 @@ def set_test_dir(directory):
 # root directory for all data
 DATA_DIR = get_dir('../Data/')
 # directory of unprocessed training frames
-TRAIN_DIR = os.path.join(DATA_DIR, 'Ms_Pacman/Train/')
+TRAIN_DIR = os.path.join(DATA_DIR, 'Train/')
 # directory of unprocessed test frames
-TEST_DIR = os.path.join(DATA_DIR, 'Ms_Pacman/Test/')
+TEST_DIR = os.path.join(DATA_DIR, 'Test/')
 # Directory of processed training clips.
 # hidden so finder doesn't freeze w/ so many files. DON'T USE `ls` COMMAND ON THIS DIR!
 TRAIN_DIR_CLIPS = get_dir(os.path.join(DATA_DIR, '.Clips/'))
@@ -187,7 +187,7 @@ SCALE_KERNEL_SIZES_G = [[3, 3, 3, 3],           # scale 1   (4 x 4)
 # learning rate for the discriminator model
 LRATE_D = 0.02
 # padding for convolutions in the discriminator model
-PADDING_D = 'VALID'
+PADDING_D = 'VALID' # no padding.
 # feature maps for each convolution of each scale network in the discriminator model
 SCALE_CONV_FMS_D = [[3, 64],
                     [3, 64, 128, 128],
