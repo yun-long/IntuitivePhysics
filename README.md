@@ -6,10 +6,10 @@ To learn the intuitive physics from videos by using Deep Learning Neural Network
 ![my_structure](https://cloud.githubusercontent.com/assets/10653658/21681820/4c8c97f0-d351-11e6-9ce5-1da74a5e3ac5.jpg)
 
 ## Generator
-![my_generator](https://cloud.githubusercontent.com/assets/10653658/21681823/4e71a024-d351-11e6-94b1-8f77a7062fcb.jpg)
+![02_gans_videogenerator 001](https://cloud.githubusercontent.com/assets/10653658/21752335/912b228c-d5d6-11e6-9f12-cb850546a45c.jpeg)
 
 ## Discriminator
-![my_discriminator](https://cloud.githubusercontent.com/assets/10653658/21681825/50541dc2-d351-11e6-89ff-1fced45d5b8c.jpg)
+![02_gans_videogenerator 003](https://cloud.githubusercontent.com/assets/10653658/21752336/912b7296-d5d6-11e6-82f5-8ba4f08867f4.jpeg)
 
 
 ## Usage
@@ -70,22 +70,22 @@ To learn the intuitive physics from videos by using Deep Learning Neural Network
 
 1. My data:
     ```
-        - Train(135 videos)
-            - Video 0
-                - frame 000.png (300 x 300)
-                - frame ...
-                - frame 049.png
-            - Video ...
-            - Video 135
-        - Test(15 videos)
-            - Video 1
-                - frame 000.png
-                - frame ...
-                - frame 049.png
-            - Video ...
-            - Video 15
-        - num_clips = 100,000
-        - Training Steps = 20,000
+    - Train(135 videos)
+        - Video 0
+            - frame 000.png (300 x 300)
+            - frame ...
+            - frame 049.png
+        - Video ...
+        - Video 135
+    - Test(15 videos)
+        - Video 1
+            - frame 000.png
+            - frame ...
+            - frame 049.png
+        - Video ...
+        - Video 15
+    - num_clips = 100,000
+    - Training Steps = 20,000
     ```
 2. Training Results:
     
