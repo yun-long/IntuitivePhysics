@@ -17,6 +17,12 @@ To learn the intuitive physics from videos by using Deep Learning Neural Network
 2. Prepare your data:
     - Preprocess your video data so that they are directories of frame sequences as structured below. (Neither the names nor the image extensions matter, only the structure):
     ```
+    - Train
+        - Video 1
+            - frame ...
+        - Video ...
+        - Video N
+            - frame ...
     - Test
         - Video 1
             - frame1.png
@@ -26,12 +32,7 @@ To learn the intuitive physics from videos by using Deep Learning Neural Network
         - Video ...
         - Video N
 
-    - Train
-        - Video 1
-            - frame ...
-        - Video ...
-        - Video N
-            - frame ...
+
     ```
 3. Process training data:
     - The network trains on random 32x32 pixel crops of the input images, filtered to make sure that most clips have some movement in them. To process your input data into this form, run the script `python process_data` from the `Code/` directory with the following options:
@@ -64,3 +65,27 @@ To learn the intuitive physics from videos by using Deep Learning Neural Network
     --test_freq=       <How often to test the model on test data, in # steps>
     --model_save_freq= <How often to save the model, in # steps>
     ```
+
+## Single Pendulum 
+
+1. My data:
+    ```
+        - Train(135 videos)
+            - Video 0
+                - frame 000.png (300 x 300)
+                - frame ...
+                - frame 049.png
+            - Video ...
+            - Video 135
+        - Test(15 videos)
+            - Video 1
+                - frame 000.png
+                - frame ...
+                - frame 049.png
+            - Video ...
+            - Video 15
+        - num_clips = 100,000
+        - Training Steps = 20,000
+    ```
+2. Training Results:
+    
