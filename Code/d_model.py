@@ -128,7 +128,7 @@ class DiscriminatorModel:
             for i, img in enumerate(gt_output_frames):
                 # for skimage.transform.resize, images need to be in range [0, 1], so normalize to
                 # [0, 1] before resize and back to [-1, 1] after
-                sknorm_img = (img / 2) + 0.5
+                sknorm_img = (img / 2)
                 resized_frame = resize(sknorm_img, [scale_net.height, scale_net.width, 3])
                 scaled_gt_output_frames[i] = (resized_frame - 0.5) * 2
 

@@ -32,7 +32,7 @@ def main():
     # Handle command line input
     ##
 
-    num_clips = 100000
+    num_clips = 5000
 
     # set train frame dimensions
     assert os.path.exists(c.TRAIN_DIR)
