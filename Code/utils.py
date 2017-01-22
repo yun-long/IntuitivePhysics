@@ -114,6 +114,66 @@ def process_clip():
 
     return cropped_clip
 
+def get_nonprocess_clips(data_dir, num_clips, num_rec_out=1):
+    """
+    Loads a batch of random clips from the unprocessed train or test data.
+
+    @param data_dir: The directory of the data to read. Should be either c.TRAIN_DIR or c.TEST_DIR.
+    @param num_clips: The number of clips to read.
+    @param num_rec_out: The number of outputs to predict. Outputs > 1 are computed recursively,
+                        using the previously-generated frames as input. Default = 1.
+
+    @return: An array of shape
+             [num_clips, c.TRAIN_HEIGHT, c.TRAIN_WIDTH, (3 * (c.HIST_LEN + num_rec_out))].
+             A batch of frame sequences with values normalized in range [-1, 1].
+    """
+    clips = np.empty([num_clips,
+                      c.FULL_HEIGHT,
+                      c.FULL_WIDTH,
+                      (c.HIST_LEN + num_rec_out)])
+
+    # get num_clips random episodes
+    ep_dirs = np.random.choice(glob(os.path.join(data_dir, '*')), num_clips)
+
+    # get a random clip of length HIST_LEN + num_rec_out from each episode
+    for clip_num, ep_dir in enumerate(ep_dirs):
+        ep_frame_paths = sorted(glob(os.path.join(ep_dir, '*')))
+        start_index = np.random.choice(len(ep_frame_paths) - (c.HIST_LEN + num_rec_out - 1))
+        clip_frame_paths = ep_frame_paths[start_index:start_index + (c.HIST_LEN + num_rec_out)]
+
+        # read in frames
+        for frame_num, frame_path in enumerate(clip_frame_paths):
+            frame = imread(frame_path, mode='L')
+            norm_frame = normalize_frames(frame)
+
+            clips[clip_num, :, :, frame_num] = norm_frame
+
+    return clips
+
+def nonprocess_clip(rm_oldclips=True, clip_skip=3, num_rec_out=1):
+    num_clips = len(glob(c.TRAIN_DIR_CLIPS + '*'))
+    # old_clips = glob(c.TRAIN_DIR_CLIPS + '*')
+    if rm_oldclips == True:
+        c.clear_dir(c.TRAIN_DIR_CLIPS)
+        print "Removed old clips file!", num_clips, "Clips"
+    num_clips = len(glob(c.TRAIN_DIR_CLIPS + '*'))
+    videos_dir = glob(os.path.join(c.TRAIN_DIR, '*'))
+    clip = np.empty([1 ,c.FULL_HEIGHT,c.FULL_WIDTH, (c.HIST_LEN + num_rec_out)])
+    for video_num, video_dir in enumerate(videos_dir):
+        frames_dir = glob(os.path.join(video_dir,'*'))
+        num_frames = len(frames_dir)
+        for start_index in range(0,num_frames,clip_skip):
+            clip_frame_paths = frames_dir[start_index:start_index+c.HIST_LEN+num_rec_out]
+            for clip_frame_num, clip_frame_path in enumerate(clip_frame_paths):
+                frame = imread(clip_frame_path, mode='L')
+                norm_frame = normalize_frames(frame)
+                clip[0, :, :, clip_frame_num] = norm_frame
+            np.savez_compressed(c.TRAIN_DIR_CLIPS + str(num_clips), clip)
+            num_clips += 1
+            if (num_clips) % 100 == 0:
+                print('Processed %d clips' % (num_clips))
+    return num_clips
+
 def get_train_batch():
     """
     Loads c.BATCH_SIZE clips from the database of preprocessed training clips.
@@ -121,7 +181,7 @@ def get_train_batch():
     @return: An array of shape
             [c.BATCH_SIZE, c.TRAIN_HEIGHT, c.TRAIN_WIDTH, (3 * (c.HIST_LEN + 1))].
     """
-    clips = np.empty([c.BATCH_SIZE, c.TRAIN_HEIGHT, c.TRAIN_WIDTH, (3 * (c.HIST_LEN + 1))],
+    clips = np.empty([c.BATCH_SIZE, c.TRAIN_HEIGHT, c.TRAIN_WIDTH, (c.GRAY * (c.HIST_LEN + 1))],
                      dtype=np.float32)
     for i in range(c.BATCH_SIZE):
         path = c.TRAIN_DIR_CLIPS + str(np.random.choice(c.NUM_CLIPS)) + '.npz'
@@ -144,7 +204,7 @@ def get_test_batch(test_batch_size, num_rec_out=1):
              [test_batch_size, c.TEST_HEIGHT, c.TEST_WIDTH, (3 * (c.HIST_LEN + num_rec_out))].
              A batch of frame sequences with values normalized in range [-1, 1].
     """
-    return get_full_clips(c.TEST_DIR, test_batch_size, num_rec_out=num_rec_out)
+    return get_nonprocess_clips(c.TEST_DIR, test_batch_size, num_rec_out=num_rec_out)
 
 
 ##
@@ -192,7 +252,7 @@ def sharp_diff_error(gen_frames, gt_frames):
     # gradient difference
     # create filters [-1, 1] and [[1],[-1]] for diffing to the left and down respectively.
     # TODO: Could this be simplified with one filter [[-1, 2], [0, -1]]?
-    pos = tf.constant(np.identity(3), dtype=tf.float32)
+    pos = tf.constant(np.identity(1), dtype=tf.float32)
     neg = -1 * pos
     filter_x = tf.expand_dims(tf.pack([neg, pos]), 0)  # [-1, 1]
     filter_y = tf.pack([tf.expand_dims(pos, 0), tf.expand_dims(neg, 0)])  # [[1],[-1]]

@@ -88,7 +88,6 @@ class AVGRunner:
             # test generator model
             if self.global_step % c.TEST_FREQ == 0:
                 self.test()
-
     def test(self):
         """
         Runs one test step on the generator network.
