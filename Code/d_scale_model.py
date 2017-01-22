@@ -70,10 +70,10 @@ class DScaleModel:
                 last_out_height = self.height
                 last_out_width = self.width
                 for i in range(len(self.kernel_sizes)):
-                    conv_ws.append(w([self.kernel_sizes[i], # 3
-                                      self.kernel_sizes[i], # 3
-                                      self.conv_layer_fms[i], # 3
-                                      self.conv_layer_fms[i + 1]])) # 64
+                    conv_ws.append(w([self.kernel_sizes[i],
+                                      self.kernel_sizes[i],
+                                      self.conv_layer_fms[i],
+                                      self.conv_layer_fms[i + 1]]))
                     conv_bs.append(b([self.conv_layer_fms[i + 1]]))
 
                     last_out_height = conv_out_size(

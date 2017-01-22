@@ -88,6 +88,7 @@ class AVGRunner:
             # test generator model
             if self.global_step % c.TEST_FREQ == 0:
                 self.test()
+
     def test(self):
         """
         Runs one test step on the generator network.
@@ -123,7 +124,7 @@ def main():
     load_path = None
     test_only = False
     num_test_rec = 1  # number of recursive predictions to make on test
-    num_steps = 5000
+    num_steps = 20001
     try:
         opts, _ = getopt.getopt(sys.argv[1:], 'l:t:r:a:n:s:OTH',
                                 ['load_path=', 'test_dir=', 'recursions=', 'adversarial=', 'name=',

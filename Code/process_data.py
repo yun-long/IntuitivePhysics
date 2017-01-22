@@ -5,8 +5,7 @@ from glob import glob
 import os
 
 import constants as c
-# from utils import process_clip
-from utils import nonprocess_clip
+from utils import process_clip
 
 
 def process_training_data(num_clips):
@@ -18,22 +17,22 @@ def process_training_data(num_clips):
 
     @warning: This can take a couple of hours to complete with large numbers of clips.
     """
-    clip_num = nonprocess_clip()
-    print('====Processed %d clips====' % (clip_num))
-    # for clip_num in range(num_prev_clips, num_clips + num_prev_clips):
-    #     clip = process_clip()
-    #
-    #     np.savez_compressed(c.TRAIN_DIR_CLIPS + str(clip_num), clip)
-    #
-    #     if (clip_num + 1) % 100 == 0:
-    #         print('Processed %d clips' % (clip_num + 1))
+    num_prev_clips = len(glob(c.TRAIN_DIR_CLIPS + '*'))
+
+    for clip_num in range(num_prev_clips, num_clips + num_prev_clips):
+        clip = process_clip()
+
+        np.savez_compressed(c.TRAIN_DIR_CLIPS + str(clip_num), clip)
+
+        if (clip_num + 1) % 100 == 0:
+            print('Processed %d clips' % (clip_num + 1))
 
 def main():
     ##
     # Handle command line input
     ##
 
-    num_clips = 5000
+    num_clips = 50000
 
     # set train frame dimensions
     assert os.path.exists(c.TRAIN_DIR)
