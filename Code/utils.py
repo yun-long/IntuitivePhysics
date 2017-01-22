@@ -114,8 +114,34 @@ def process_clip():
 
     return cropped_clip
 
-def nonprocess_clip():
-
+def nonprocess_clip(clip_skip=3, num_rec_out=1):
+    # num_clips = len(glob(c.TRAIN_DIR_CLIPS + '*'))
+    old_clips = glob(c.TRAIN_DIR_CLIPS + '*')
+    for num_old_clip,old_clip in enumerate(old_clips):
+        try:
+            os.remove(old_clip)
+        except:
+            None
+    print "Removed old clips file!", num_old_clip, "Clips"
+    num_clips = len(glob(c.TRAIN_DIR_CLIPS + '*'))
+    videos_dir = glob(os.path.join(c.TRAIN_DIR, '*'))
+    clip = np.empty([1 ,c.FULL_HEIGHT,c.FULL_WIDTH, (c.HIST_LEN + num_rec_out)])
+    for video_num, video_dir in enumerate(videos_dir):
+        frames_dir = glob(os.path.join(video_dir,'*'))
+        num_frames = len(frames_dir)
+        start_index = 0
+        for start_index in range(0,num_frames,clip_skip):
+            clip_frame_paths = frames_dir[start_index:start_index+c.HIST_LEN+num_rec_out]
+            # read in frames
+            for clip_frame_num, clip_frame_path in enumerate(clip_frame_paths):
+                frame = imread(clip_frame_path, mode='L')
+                norm_frame = normalize_frames(frame)
+                clip[0, :, :, clip_frame_num] = norm_frame
+            np.savez_compressed(c.TRAIN_DIR_CLIPS + str(num_clips), clip)
+            # start_index = start_index + clip_skip
+            num_clips += 1
+            if (num_clips) % 100 == 0:
+                print('Processed %d clips' % (num_clips))
     return num_clips
 
 def get_train_batch():
