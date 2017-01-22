@@ -114,6 +114,10 @@ def process_clip():
 
     return cropped_clip
 
+def nonprocess_clip():
+
+    return num_clips
+
 def get_train_batch():
     """
     Loads c.BATCH_SIZE clips from the database of preprocessed training clips.
