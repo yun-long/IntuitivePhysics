@@ -88,6 +88,9 @@ FULL_WIDTH = 160
 # the height and width of the patches to train on
 TRAIN_HEIGHT = TRAIN_WIDTH = 32
 
+#
+RGB = 3
+GRAY = 1
 ##
 # Output
 ##
@@ -127,11 +130,11 @@ SUMMARY_SAVE_DIR = get_dir(os.path.join(SAVE_DIR, 'Summaries/', SAVE_NAME))
 IMG_SAVE_DIR = get_dir(os.path.join(SAVE_DIR, 'Images/', SAVE_NAME))
 
 
-STATS_FREQ      = 10     # how often to print loss/train error stats, in # steps
-SUMMARY_FREQ    = 100    # how often to save the summaries, in # steps
-IMG_SAVE_FREQ   = 1000   # how often to save generated images, in # steps
-TEST_FREQ       = 1000   # how often to test the model on test data, in # steps
-MODEL_SAVE_FREQ = 1000  # how often to save the model, in # steps
+STATS_FREQ      = 1     # how often to print loss/train error stats, in # steps
+SUMMARY_FREQ    = 1    # how often to save the summaries, in # steps
+IMG_SAVE_FREQ   = 1   # how often to save generated images, in # steps
+TEST_FREQ       = 1   # how often to test the model on test data, in # steps
+MODEL_SAVE_FREQ = 10  # how often to save the model, in # steps
 
 ##
 # General training
@@ -169,10 +172,10 @@ LRATE_G = 0.00004  # Value in paper is 0.04
 PADDING_G = 'SAME'
 # feature maps for each convolution of each scale network in the generator model
 # e.g SCALE_FMS_G[1][2] is the input of the 3rd convolution in the 2nd scale network.
-SCALE_FMS_G = [[3 * HIST_LEN, 128, 256, 128, 3],                        # scale 1   (4 x 4)
-               [3 * (HIST_LEN + 1), 128, 256, 128, 3],                  # scale 2   (8 x 8)
-               [3 * (HIST_LEN + 1), 128, 256, 512, 256, 128, 3],        # scale 3   (16x16)
-               [3 * (HIST_LEN + 1), 128, 256, 512, 256, 128, 3]]        # scale 4   (32x32)
+SCALE_FMS_G = [[GRAY * HIST_LEN, 128, 256, 128, GRAY],                        # scale 1   (4 x 4)
+               [GRAY * (HIST_LEN + 1), 128, 256, 128, GRAY],                  # scale 2   (8 x 8)
+               [GRAY * (HIST_LEN + 1), 128, 256, 512, 256, 128, GRAY],        # scale 3   (16x16)
+               [GRAY * (HIST_LEN + 1), 128, 256, 512, 256, 128, GRAY]]        # scale 4   (32x32)
 # kernel sizes for each convolution of each scale network in the generator model
 SCALE_KERNEL_SIZES_G = [[3, 3, 3, 3],           # scale 1   (4 x 4)
                         [5, 3, 3, 5],           # scale 2   (8 x 8)
@@ -189,10 +192,10 @@ LRATE_D = 0.02
 # padding for convolutions in the discriminator model
 PADDING_D = 'VALID' # no padding.
 # feature maps for each convolution of each scale network in the discriminator model
-SCALE_CONV_FMS_D = [[3, 64],
-                    [3, 64, 128, 128],
-                    [3, 128, 256, 256],
-                    [3, 128, 256, 512, 128]]
+SCALE_CONV_FMS_D = [[GRAY, 64],
+                    [GRAY, 64, 128, 128],
+                    [GRAY, 128, 256, 256],
+                    [GRAY, 128, 256, 512, 128]]
 # kernel sizes for each convolution of each scale network in the discriminator model
 SCALE_KERNEL_SIZES_D = [[3],
                         [3, 3, 3],

@@ -59,14 +59,14 @@ class GeneratorModel:
 
             with tf.name_scope('data'):
                 self.input_frames_train = tf.placeholder(
-                    tf.float32, shape=[None, self.height_train, self.width_train, 3 * c.HIST_LEN])
+                    tf.float32, shape=[None, self.height_train, self.width_train, c.GRAY * c.HIST_LEN])
                 self.gt_frames_train = tf.placeholder(
-                    tf.float32, shape=[None, self.height_train, self.width_train, 3])
+                    tf.float32, shape=[None, self.height_train, self.width_train, c.GRAY])
 
                 self.input_frames_test = tf.placeholder(
-                    tf.float32, shape=[None, self.height_test, self.width_test, 3 * c.HIST_LEN])
+                    tf.float32, shape=[None, self.height_test, self.width_test, c.GRAY * c.HIST_LEN])
                 self.gt_frames_test = tf.placeholder(
-                    tf.float32, shape=[None, self.height_test, self.width_test, 3])
+                    tf.float32, shape=[None, self.height_test, self.width_test, c.GRAY])
 
                 # use variable batch_size for more flexibility
                 self.batch_size_train = tf.shape(self.input_frames_train)[0]
@@ -247,8 +247,8 @@ class GeneratorModel:
         # Split into inputs and outputs
         ##
 
-        input_frames = batch[:, :, :, :-3]
-        gt_frames = batch[:, :, :, -3:]
+        input_frames = batch[:, :, :, :-c.GRAY]
+        gt_frames = batch[:, :, :, -c.GRAY:]
 
         ##
         # Train
@@ -307,12 +307,12 @@ class GeneratorModel:
                 scale_width = int(self.width_train * scale_factor)
 
                 # resize gt_output_frames for scale and append to scale_gts_train
-                scaled_gt_frames = np.empty([c.BATCH_SIZE, scale_height, scale_width, 3])
+                scaled_gt_frames = np.empty([c.BATCH_SIZE, scale_height, scale_width, c.GRAY])
                 for i, img in enumerate(gt_frames):
                     # for skimage.transform.resize, images need to be in range [0, 1], so normalize
                     # to [0, 1] before resize and back to [-1, 1] after
-                    sknorm_img = (img / 2) + 0.5
-                    resized_frame = resize(sknorm_img, [scale_height, scale_width, 3])
+                    sknorm_img = (img / 2)
+                    resized_frame = resize(sknorm_img, [scale_height, scale_width, c.GRAY])
                     scaled_gt_frames[i] = (resized_frame - 0.5) * 2
                 scale_gts.append(scaled_gt_frames)
 
@@ -323,7 +323,7 @@ class GeneratorModel:
 
                 # save input images
                 for frame_num in range(c.HIST_LEN):
-                    img = input_frames[pred_num, :, :, (frame_num * 3):((frame_num + 1) * 3)]
+                    img = input_frames[pred_num, :, :, frame_num]
                     imsave(os.path.join(pred_dir, 'input_' + str(frame_num) + '.png'), img)
 
                 # save preds and gts at each scale
@@ -334,8 +334,8 @@ class GeneratorModel:
                     path = os.path.join(pred_dir, 'scale' + str(scale_num))
                     gt_img = scale_gts[scale_num][pred_num]
 
-                    imsave(path + '_gen.png', gen_img)
-                    imsave(path + '_gt.png', gt_img)
+                    imsave(path + '_gen.png', gen_img[:,:,0])
+                    imsave(path + '_gt.png', gt_img[:,:,0])
 
             print('Saved images!')
             print('-' * 30)
@@ -367,9 +367,9 @@ class GeneratorModel:
         # Split into inputs and outputs
         ##
 
-        input_frames = batch[:, :, :, :3 * c.HIST_LEN]
-        gt_frames = batch[:, :, :, 3 * c.HIST_LEN:]
-
+        input_frames = batch[:, :, :, :c.GRAY * c.HIST_LEN]
+        my_gt_frames = batch[:, :, :, c.GRAY * c.HIST_LEN:]
+        gt_frames = np.expand_dims(my_gt_frames, axis=3)
         ##
         # Generate num_rec_out recursive predictions
         ##
@@ -378,7 +378,7 @@ class GeneratorModel:
         rec_preds = []
         rec_summaries = []
         for rec_num in range(num_rec_out):
-            working_gt_frames = gt_frames[:, :, :, 3 * rec_num:3 * (rec_num + 1)]
+            working_gt_frames = gt_frames[:, :, :,  rec_num]
 
             feed_dict = {self.input_frames_test: working_input_frames,
                          self.gt_frames_test: working_gt_frames}
@@ -390,7 +390,7 @@ class GeneratorModel:
 
             # remove first input and add new pred as last input
             working_input_frames = np.concatenate(
-                [working_input_frames[:, :, :, 3:], preds], axis=3)
+                [working_input_frames[:, :, :, c.GRAY:], preds], axis=3)
 
             # add predictions and summaries
             rec_preds.append(preds)
@@ -415,14 +415,14 @@ class GeneratorModel:
 
                 # save input images
                 for frame_num in range(c.HIST_LEN):
-                    img = input_frames[pred_num, :, :, (frame_num * 3):((frame_num + 1) * 3)]
+                    img = input_frames[pred_num, :, :, frame_num]
                     imsave(os.path.join(pred_dir, 'input_' + str(frame_num) + '.png'), img)
 
                 # save recursive outputs
                 for rec_num in range(num_rec_out):
                     gen_img = rec_preds[rec_num][pred_num]
-                    gt_img = gt_frames[pred_num, :, :, 3 * rec_num:3 * (rec_num + 1)]
-                    imsave(os.path.join(pred_dir, 'gen_' + str(rec_num) + '.png'), gen_img)
-                    imsave(os.path.join(pred_dir, 'gt_' + str(rec_num) + '.png'), gt_img)
+                    gt_img = gt_frames[pred_num, :, :, rec_num]
+                    imsave(os.path.join(pred_dir, 'gen_' + str(rec_num) + '.png'), gen_img[:,:,0])
+                    imsave(os.path.join(pred_dir, 'gt_' + str(rec_num) + '.png'), gt_img[:,:,0])
 
         print('-' * 30)

@@ -124,12 +124,12 @@ class DiscriminatorModel:
             scale_net = self.scale_nets[scale_num]
 
             # resize gt_output_frames
-            scaled_gt_output_frames = np.empty([batch_size, scale_net.height, scale_net.width, 3])
+            scaled_gt_output_frames = np.empty([batch_size, scale_net.height, scale_net.width, c.GRAY])
             for i, img in enumerate(gt_output_frames):
                 # for skimage.transform.resize, images need to be in range [0, 1], so normalize to
                 # [0, 1] before resize and back to [-1, 1] after
                 sknorm_img = (img / 2)
-                resized_frame = resize(sknorm_img, [scale_net.height, scale_net.width, 3])
+                resized_frame = resize(sknorm_img, [scale_net.height, scale_net.width, c.GRAY])
                 scaled_gt_output_frames[i] = (resized_frame - 0.5) * 2
 
             # combine with resized gt_output_frames to get inputs for prediction
@@ -151,7 +151,7 @@ class DiscriminatorModel:
         Runs a training step using the global loss on each of the scale networks.
 
         @param batch: An array of shape
-                      [BATCH_SIZE x self.height x self.width x (3 * (HIST_LEN + 1))]. The input
+                      [BATCH_SIZE x self.height x self.width x (c.GRAY * (HIST_LEN + 1))]. The input
                       and output frames, concatenated along the channel axis (index 3).
         @param generator: The generator model.
 
@@ -161,8 +161,8 @@ class DiscriminatorModel:
         # Split into inputs and outputs
         ##
 
-        input_frames = batch[:, :, :, :-3]
-        gt_output_frames = batch[:, :, :, -3:]
+        input_frames = batch[:, :, :, :-c.GRAY]
+        gt_output_frames = batch[:, :, :, -c.GRAY:]
 
         ##
         # Train
